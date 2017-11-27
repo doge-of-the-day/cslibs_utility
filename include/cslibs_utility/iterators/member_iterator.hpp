@@ -1,7 +1,7 @@
 #ifndef CSLIBS_UTILITY_MEMBER_ITERATOR_HPP
 #define CSLIBS_UTILITY_MEMBER_ITERATOR_HPP
 
-#include <muse_smc/utility/delegate.hpp>
+#include <cslibs_utility/common/delegate.hpp>
 
 namespace cslibs_utility {
 namespace iterators {

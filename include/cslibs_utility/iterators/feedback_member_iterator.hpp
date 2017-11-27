@@ -17,7 +17,7 @@ class FeedbackMemberIterator : public std::iterator<std::random_access_iterator_
     using iterator  = typename parent::iterator;
     using reference = typename parent::reference;
 
-    using notify_update = delegate<void(const T &)>;
+    using notify_update = cslibs_utility::common::delegate<void(const T &)>;
 
     data_t            *data_;     /// data container content
     notify_update    update_;   /// on update callback
