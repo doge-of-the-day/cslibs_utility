@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>cslibs_utility</name>
+  <version>0.0.1</version>
+  <description>
+    The cslibs_utility package contains a set of utility classes, e.g. synchronized data structures and such.
+  </description>
+
+  <maintainer email="richard.hanten@uni-tuebingen.de">Richard Hanten</maintainer>
+  <author email="richard.hanten@uni-tuebingen.de">Richard Hanten</author>
+  <license>BSD</license>
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <export>
+  </export>
+</package>
