@@ -28,6 +28,11 @@ public:
         }
     }
 
+    inline WrapAround(const WrapAround &other) = default;
+    inline WrapAround(WrapAround &&other) = default;
+    inline WrapAround& operator = (const WrapAround &other) = default;
+    inline WrapAround& operator = (WrapAround &&other) = default;
+
     virtual inline ~WrapAround()
     {
         if(data_) {
