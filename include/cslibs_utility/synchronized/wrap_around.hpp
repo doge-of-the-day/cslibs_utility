@@ -2,28 +2,37 @@
 #define CSLIBS_UTILITY_WRAP_AROUND_HPP
 
 #include <mutex>
+#include <assert.h>
 
 namespace cslibs_utility {
 namespace synchronized {
-template<typename data_t, std::mutex data_t::*mutex>
+template<typename data_t>
 class WrapAround {
 public:
+    using mutex_t = std::mutex;
+
     inline WrapAround() :
         data_(nullptr)
     {
     }
 
-    inline WrapAround(data_t *container) :
-        data_(container)
+    inline explicit WrapAround(data_t  *data,
+                               mutex_t *mutex) :
+        data_(data),
+        mutex_(mutex)
     {
-        if(data_)
-            (data_->*mutex).lock();
+        assert(mutex != nullptr);
+        assert(data  != nullptr);
+        if(data_) {
+            mutex_->lock();
+        }
     }
 
     virtual inline ~WrapAround()
     {
-        if(data_)
-          (data_->*mutex).unlock();
+        if(data_) {
+            mutex_->unlock();
+        }
     }
 
     inline bool empty() const
@@ -62,7 +71,8 @@ public:
     }
 
 private:
-    data_t *data_;
+    data_t  *data_;
+    mutex_t *mutex_;
 };
 }
 }
