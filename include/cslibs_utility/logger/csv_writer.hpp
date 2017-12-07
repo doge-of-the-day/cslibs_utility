@@ -13,13 +13,25 @@
 
 namespace cslibs_utility {
 namespace logger {
+template<typename T>
+inline std::string toString(const T &t)
+{
+    return std::to_string(t);
+}
+
+template<>
+inline std::string toString<std::string>(const std::string &str)
+{
+    return str;
+}
+
 template<typename ... Types>
 class CSVWriter {
 public:
     using Ptr = std::shared_ptr<CSVWriter<Types ...>>;
 
     static constexpr std::size_t size = sizeof ... (Types);
-    using Header = std::array<std::string, size>;
+    using header_t = std::array<std::string, size>;
 
     inline void write(const Types ... ts)
     {
@@ -29,7 +41,7 @@ public:
         notify_log_.notify_one();
     }
 
-    CSVWriter(const Header &header,
+    CSVWriter(const header_t &header,
               const std::string &path) :
         header_(header),
         has_header_(true),
@@ -62,7 +74,7 @@ public:
 
 private:
     std::ofstream           out_;
-    Header                  header_;
+    header_t                header_;
     bool                    has_header_;
     std::string             path_;
     long                    start_time_;
@@ -120,13 +132,13 @@ private:
     template<typename WT, typename ... WTypes>
     inline std::string buildString(const WT &t, WTypes ... ts) const
     {
-        return std::to_string(t) + "," + buildString(ts...);
+        return toString(t) + "," + buildString(ts...);
     }
 
     template<typename T>
     inline std::string buildString(const T &t) const
     {
-        return std::to_string(t);
+        return toString(t);
     }
 
 };
