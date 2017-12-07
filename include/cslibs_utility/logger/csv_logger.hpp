@@ -11,6 +11,8 @@
 #include <condition_variable>
 #include <queue>
 
+#include <cslibs_utility/logger/csv_writer.hpp>
+
 namespace cslibs_utility {
 namespace logger {
 template<typename ... Types>
@@ -19,103 +21,26 @@ public:
     using Ptr = std::shared_ptr<CSVLogger<Types ...>>;
 
     static constexpr std::size_t size = sizeof ... (Types);
-    using Header = std::array<std::string, size>;
+    using header_t = std::array<std::string, size>;
 
     inline void log(const Types ... ts)
     {
-        long s, ms;
-        getTime(s, ms);
-        ms += 1000 * s - start_time_;
-
-        std::string string_build = std::to_string(static_cast<double>(ms) / 1e3) + "," +
-                    buildString(ts...);
-
-        std::unique_lock<std::mutex> q_lock(q_mutex_);
-        q_.push(string_build);
-        notify_log_.notify_one();
+        writer_->write(getTime(), ts...);
     }
 
-    CSVLogger(const Header &header,
-              const std::string &path = "") :
-        header_(header),
-        path_(path),
-        stop_(false)
+    inline CSVLogger(const header_t &header,
+                     const std::string &path = "")
     {
-        running_ = true;
-        worker_thread_ = std::thread([this]{loop();});
-    }
-
-    virtual ~CSVLogger()
-    {
-        if(running_) {
-            stop_ = true;
-            notify_log_.notify_one();
-            if(worker_thread_.joinable())
-                worker_thread_.join();
+        typename CSVWriter<std::string, Types ...>::header_t head;
+        head[0] = "time";
+        for(std::size_t i = 0 ; i < size ; ++i) {
+            head[i+1] = header[i];
         }
+        writer_.reset(new CSVWriter<std::string, Types ...>(head, path == "" ? "/tmp/" + getTime() + ".log" : path));
     }
 
 private:
-    std::ofstream           out_;
-    Header                  header_;
-    std::string             path_;
-    long                    start_time_;
-
-    std::thread             worker_thread_;
-    std::mutex              q_mutex_;
-    std::queue<std::string> q_;
-    std::mutex              notify_mutex_;
-    std::condition_variable notify_log_;
-
-    std::atomic_bool        running_;
-    std::atomic_bool        stop_;
-
-    void loop()
-    {
-        out_.open(path_);
-        if(!out_.is_open()) {
-            std::stringstream ss;
-            long s, ms;
-            getTime(s, ms);
-            ss << "/tmp/muse_filter_state_" << getTime() << ".log";
-            out_.open(ss.str());
-        }
-
-        if(size > 0) {
-            out_ << "time,";
-            for(std::size_t i = 0 ; i < size - 1 ; ++i) {
-                out_ << header_[i];
-            }
-            out_ << header_[size - 1];
-        } else {
-            out_ << "time";
-        }
-        out_ << "\n";
-
-        auto dumpQ = [this] () {
-            while(!q_.empty()) {
-                std::unique_lock<std::mutex> q_lock(q_mutex_);
-                auto f = q_.front();
-                q_.pop();
-                q_lock.unlock();
-
-                out_ << f << "\n";
-            }
-        };
-
-        std::unique_lock<std::mutex> notify_lock(notify_mutex_);
-        while(!stop_) {
-            notify_log_.wait(notify_lock);
-            dumpQ();
-        }
-        dumpQ();
-
-        out_.flush();
-        if(out_.is_open())
-            out_.close();
-
-        running_ = false;
-    }
+    typename CSVWriter<std::string, Types ...>::Ptr writer_;
 
     inline void getTime(long &seconds,
                         long &milliseconds)
@@ -135,19 +60,6 @@ private:
         const std::string time = std::to_string(s) + "." + ms_off + std::to_string(ms);
         return time;
     }
-
-    template<typename WT, typename ... WTypes>
-    inline std::string buildString(const WT &t, WTypes ... ts) const
-    {
-        return std::to_string(t) + "," + buildString(ts...);
-    }
-
-    template<typename T>
-    inline std::string buildString(const T &t) const
-    {
-        return std::to_string(t);
-    }
-
 };
 }
 }
