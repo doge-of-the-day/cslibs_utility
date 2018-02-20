@@ -7,6 +7,12 @@
 
 namespace cslibs_utility {
 namespace synchronized {
+/**
+ * @param _Tp       - comparable data types
+ * @param _Compare  - comparing data types, please make sure to enter a sort function
+ *                    which results in a unique asssociation of elements, otherwise,
+ *                    the order within the queue is not guaranteed.
+ */
 template<typename _Tp, typename _Compare = std::less<_Tp>>
 class priority_queue
 {
