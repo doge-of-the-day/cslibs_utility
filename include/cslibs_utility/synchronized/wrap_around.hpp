@@ -47,7 +47,7 @@ public:
 
     inline const data_t& data() const
     {
-        return data_->data_;
+        return *data_;
     }
 
     inline data_t& data()

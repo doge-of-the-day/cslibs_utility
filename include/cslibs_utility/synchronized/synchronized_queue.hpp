@@ -26,7 +26,6 @@ public:
         return !empty();
     }
 
-
     inline std::size_t size() const
     {
         lock_t l(mutex_);
@@ -56,4 +55,4 @@ private:
 }
 
 
-#endif //  CSLIBS_UTILITY_SYNCHRONIZED_QUEUE_HPP
+#endif // CSLIBS_UTILITY_SYNCHRONIZED_QUEUE_HPP
