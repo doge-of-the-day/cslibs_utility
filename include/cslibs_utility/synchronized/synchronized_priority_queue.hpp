@@ -34,7 +34,6 @@ public:
         return !empty();
     }
 
-
     inline std::size_t size() const
     {
         lock_t l(mutex_);
