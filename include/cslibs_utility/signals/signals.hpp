@@ -55,10 +55,10 @@ public:
     }
 
     template<typename Function>
-    typename Connection::Ptr connect(Function &_f)
+    typename Connection::Ptr connect(Function&& _f)
     {
         typename Connection::Ptr c(new Signal::Connection(*this));
-        connections[c.get()] = _f;
+        connections[c.get()] = std::forward<Function>(_f);
         return c;
     }
 
