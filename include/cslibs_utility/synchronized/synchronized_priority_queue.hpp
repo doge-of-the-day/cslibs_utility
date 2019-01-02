@@ -13,13 +13,13 @@ namespace synchronized {
  *                    which results in a unique asssociation of elements, otherwise,
  *                    the order within the queue is not guaranteed.
  */
-template<typename _Tp, typename _Compare = std::less<_Tp>>
+template<typename _Tp, typename _Compare = std::less<_Tp>, typename _Alloctor = std::allocator<char>>
 class priority_queue
 {
 public:
     using mutex_t = std::mutex;
     using lock_t  = std::unique_lock<mutex_t>;
-    using queue_t = __gnu_pbds::priority_queue<_Tp, _Compare, __gnu_pbds::rc_binomial_heap_tag>;
+    using queue_t = __gnu_pbds::priority_queue<_Tp, _Compare, __gnu_pbds::rc_binomial_heap_tag, _Alloctor>;
 
     priority_queue() = default;
 
