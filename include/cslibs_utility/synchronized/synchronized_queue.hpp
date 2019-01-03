@@ -46,10 +46,10 @@ public:
         return q_.front();
     }
 
-    inline void emplace(const _Tp &t)
+    inline void push(const _Tp &t)
     {
         lock_t l(mutex_);
-        q_.emplace(t);
+        q_.push(t);
     }
 
 private:
