@@ -50,7 +50,7 @@ public:
 
     inline _Tp const & top() const
     {
-        lock_t(mutex_);
+        lock_t l(mutex_);
         return q_.top();
     }
 
@@ -59,6 +59,15 @@ public:
         lock_t l(mutex_);
         q_.push(t);
     }
+
+    inline void clear()
+    {
+        lock_t l(mutex_);
+        while (!q_.empty()) {
+            q_.pop();
+        }
+    }
+
 
 private:
     mutable mutex_t mutex_;
