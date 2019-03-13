@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <package format="2">
   <name>cslibs_utility</name>
-  <version>0.0.1</version>
+  <version>0.0.6</version>
   <description>
     The cslibs_utility package contains a set of utility classes, e.g. synchronized data structures and such.
   </description>
