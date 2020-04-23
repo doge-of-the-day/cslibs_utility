@@ -42,7 +42,7 @@ public:
 
     inline _Tp const & top() const
     {
-        lock_t(mutex_);
+        lock_t l(mutex_);
         return q_.front();
     }
 
