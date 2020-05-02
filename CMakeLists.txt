@@ -4,6 +4,7 @@ project(cslibs_utility)
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 
 include(cmake/cslibs_utility_enable_c++17.cmake)
+include(cmake/cslibs_utility_add_unit_test_gtest.cmake)
 
 find_package(catkin REQUIRED)
 catkin_package(
@@ -17,6 +18,14 @@ add_library(${PROJECT_NAME} INTERFACE)
 target_include_directories(${PROJECT_NAME}
     INTERFACE
         include/
+)
+
+cslibs_utility_add_unit_test_gtest(${PROJECT_NAME}_test_csv_writer_reader
+    INCLUDE_DIRS
+        include/
+    SOURCE_FILES
+        test/test_csv_writer_reader.cpp
+
 )
 
 install(DIRECTORY include/${PROJECT_NAME}/

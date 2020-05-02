@@ -16,8 +16,8 @@
 namespace cslibs_utility {
 namespace logger {
 template <typename T>
-inline T fromString(const std::string &str) {
-  T data;
+inline typename std::remove_reference<T>::type fromString(const std::string &str) {
+  typename std::remove_reference<T>::type data;
   std::stringstream ss{str};
   ss >> data;
   return data;
@@ -42,7 +42,7 @@ class CSVReader {
 
   inline explicit CSVReader(const std::string &path,
                             const bool has_header = false)
-      : in_{path} {}
+      : in_{path} {read(has_header);}
   inline virtual ~CSVReader() = default;
 
   inline bool hasHeader() const { return header_.has_value(); }
@@ -85,6 +85,7 @@ class CSVReader {
               ((args = fromString<decltype(args)>(iterate())), ...);
             },
             entry);
+        data_.emplace_back(entry);
       }
     }
   }
