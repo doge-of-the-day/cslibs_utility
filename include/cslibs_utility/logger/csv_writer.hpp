@@ -40,22 +40,25 @@ class CSVWriter {
 
   inline CSVWriter(const header_t &header, const std::string &path)
       : header_(header), has_header_(true), path_(path), stop_(false) {
-    running_ = true;
     worker_thread_ = std::thread([this] { loop(); });
   }
 
   inline CSVWriter(const std::string &path)
       : has_header_(false), path_(path), stop_(false) {
-    running_ = true;
     worker_thread_ = std::thread([this] { loop(); });
   }
 
   virtual ~CSVWriter() {
-    if (running_) {
+    if (worker_thread_.joinable()) {
       stop_ = true;
       notify_log_.notify_one();
-      if (worker_thread_.joinable()) worker_thread_.join();
+      worker_thread_.join();
     }
+  }
+
+  inline auto const & path() const
+  {
+    return path_;
   }
 
  private:
@@ -71,7 +74,6 @@ class CSVWriter {
   std::mutex notify_mutex_;
   std::condition_variable notify_log_;
 
-  std::atomic_bool running_;
   std::atomic_bool stop_;
 
   void loop() {
@@ -109,8 +111,6 @@ class CSVWriter {
 
     out_.flush();
     if (out_.is_open()) out_.close();
-
-    running_ = false;
   }
 
   template <typename WT, typename... WTypes>
