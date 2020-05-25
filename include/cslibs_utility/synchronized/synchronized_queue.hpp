@@ -13,7 +13,7 @@ public:
     using mutex_t = std::mutex;
     using lock_t  = std::unique_lock<mutex_t>;
 
-    queue() = default;
+    inline queue() = default;
 
     inline bool empty() const
     {
