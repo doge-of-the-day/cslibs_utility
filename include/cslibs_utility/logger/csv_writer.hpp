@@ -56,7 +56,7 @@ class CSVWriter {
     }
   }
 
-  inline auto const & path() const
+  inline std::string const & path() const
   {
     return path_;
   }
