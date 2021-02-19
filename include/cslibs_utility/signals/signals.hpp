@@ -58,7 +58,7 @@ public:
     typename Connection::Ptr connect(Function&& _f)
     {
         typename Connection::Ptr c(new Signal::Connection(*this));
-        connections[c.get()] = std::forward<Function>(_f);
+        connections[c.get()] = std::move(std::forward<Function>(_f));
         return c;
     }
 
@@ -82,7 +82,7 @@ public:
 
         std::unique_lock<std::mutex> lock(mutex);
         for(auto &c : connections) {
-            c.second(args...);
+            c.second(std::move(args...));
         }
     }
 
