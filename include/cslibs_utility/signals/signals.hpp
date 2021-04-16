@@ -75,7 +75,7 @@ public:
     }
 
     template<typename... Args>
-    void operator ()(Args... args)
+    void operator ()(Args&&... args)
     {
         if(!enabled)
             return;
@@ -83,6 +83,18 @@ public:
         std::unique_lock<std::mutex> lock(mutex);
         for(auto &c : connections) {
             c.second(std::move(args...));
+        }
+    }
+
+    template<typename... Args>
+    void operator ()(Args&... args)
+    {
+        if(!enabled)
+            return;
+
+        std::unique_lock<std::mutex> lock(mutex);
+        for(auto &c : connections) {
+            c.second(args...);
         }
     }
 
